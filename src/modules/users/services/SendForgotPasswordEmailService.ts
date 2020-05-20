@@ -1,4 +1,5 @@
 import { inject, injectable } from 'tsyringe';
+import path from 'path';
 
 // import { User } from '@modules/users/infra/typeorm/entities/User';
 import { AppError } from '@shared/errors/AppError';
@@ -30,11 +31,25 @@ export class SendForgotPasswordEmailService {
       throw new AppError('E-mail não cadastrado.');
     }
 
-    await this.userTokensRepository.generate(user.id);
+    const { token } = await this.userTokensRepository.generate(user.id);
 
-    this.mailProvider.sendMail(
-      email,
-      'Pedido de recuperação de senha recebido.',
+    const forgotPasswordTemplatePathFile = path.resolve(
+      __dirname,
+      '..',
+      'views',
+      'forgot_password.hbs',
     );
+
+    await this.mailProvider.sendMail({
+      to: { name: user.name, email: user.email },
+      subject: '[GoBarber] - Recuperação de senha',
+      templateData: {
+        file: forgotPasswordTemplatePathFile,
+        variables: {
+          name: user.name,
+          link: `http://localhost:3000/reset_password?token=${token}`,
+        },
+      },
+    });
   }
 }
