@@ -27,7 +27,7 @@
     "nodemailer": "^6.4.6",
     "pg": "^8.0.3",
     "tsyringe": "^4.3.0",
-    "typeorm": "^0.2.24",
+    "typeorm": "^0.2.25",
     "uuidv4": "^6.0.7"
   },
   "devDependencies": {
